@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Damasco · Demo gastronómica | Ros Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'obsidian':   '#0D0A07',
+            'obsidian2':  '#1A1410',
+            'obsidian3':  '#241E17',
+            'gold':       '#C8A96E',
+            'gold-light': '#E0C898',
+            'cream':      '#E8D5B0',
+            'cream-dim':  '#B8A880',
+            'granada':    '#8B2E1A',
+            'granada2':   '#A03520',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'serif'],
+            body:    ['"Space Grotesk"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #0D0A07; color: #E8D5B0; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+    ::selection { background: #C8A96E; color: #0D0A07; }
+
+    /* ── HERO ── */
+    .hero-word {
+      display: block;
+      line-height: 0.88;
+      letter-spacing: -0.03em;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+    }
+    .hero-word--left  { transform: translateX(-80px); opacity: 0; }
+    .hero-word--right { transform: translateX(80px);  opacity: 0; }
+    .hero-word.in     { transform: translateX(0);     opacity: 1; transition: transform 1s cubic-bezier(.16,1,.3,1), opacity .8s ease; }
+    .hero-word--right.in { transition-delay: .15s; }
+
+    .slash-divider {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .slash-divider::before {
+      content: '';
+      position: absolute;
+      top: 42%;
+      left: -5%;
+      width: 110%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #C8A96E 25%, #C8A96E 75%, transparent);
+      transform: rotate(-3deg);
+    }
+
+    /* ── NAV ── */
+    .nav-link {
+      position: relative;
+      color: #B8A880;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .72rem;
+      font-weight: 500;
+      transition: color .3s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: #C8A96E;
+      transition: width .4s cubic-bezier(.16,1,.3,1);
+    }
+    .nav-link:hover { color: #C8A96E; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── GOLD LINE ── */
+    .gold-rule { border: none; border-top: 1px solid #C8A96E; opacity: .35; }
+
+    /* ── CARD ── */
+    .dish-card {
+      background: #1A1410;
+      border: 1px solid rgba(200,169,110,.15);
+      transition: border-color .4s, transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+    }
+    .dish-card:hover {
+      border-color: rgba(200,169,110,.55);
+      transform: translateY(-6px);
+      box-shadow: 0 28px 64px rgba(0,0,0,.5), 0 0 0 1px rgba(200,169,110,.2);
+    }
+
+    /* ── BENEFIT CARD ── */
+    .benefit-card {
+      background: #1A1410;
+      border: 1px solid rgba(200,169,110,.12);
+      transition: background .4s, transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .benefit-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: #C8A96E;
+      transition: height .5s cubic-bezier(.16,1,.3,1);
+    }
+    .benefit-card:hover::before  { height: 100%; }
+    .benefit-card:hover {
+      background: #241E17;
+      transform: translateX(6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+    }
+
+    /* ── CTA BUTTON ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      background: #C8A96E;
+      color: #0D0A07;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .8rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 1rem 2rem;
+      border: 2px solid #C8A96E;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: color .4s, background .4s, transform .3s;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #0D0A07;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .4s cubic-bezier(.16,1,.3,1);
+      z-index: 0;
+    }
+    .btn-primary:hover { color: #C8A96E; }
+    .btn-primary:hover::after { transform: scaleX(1); transform-origin: left; }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      background: transparent;
+      color: #C8A96E;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: .8rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 1rem 2rem;
+      border: 1px solid rgba(200,169,110,.5);
+      cursor: pointer;
+      transition: border-color .3s, color .3s, background .3s;
+    }
+    .btn-ghost:hover { border-color: #C8A96E; background: rgba(200,169,110,.08); }
+
+    /* ── MARQUEE ── */
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 28s linear infinite;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── MENU TABS ── */
+    .tab-btn { transition: color .3s, border-color .3s; }
+    .tab-btn.active { color: #C8A96E; border-bottom-color: #C8A96E; }
+    .tab-panel[hidden] { display: none !important; }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAV -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5" style="background:rgba(13,10,7,.85); backdrop-filter:blur(16px); border-bottom:1px solid rgba(200,169,110,.1);">
+  <a href="#" class="font-display text-gold font-bold tracking-widest text-sm uppercase">Damasco</a>
+  <nav class="hidden md:flex items-center gap-10">
+    <a href="#carta"     class="nav-link">Carta</a>
+    <a href="#nosotros"  class="nav-link">Nosotros</a>
+    <a href="#ubicacion" class="nav-link">Cómo llegar</a>
+  </nav>
+  <a href="#carta" class="btn-ghost text-xs py-2 px-4">
+    <span>Ver carta</span>
+  </a>
+</header>
+
+<!-- ═══════════════════════════════════════════ HERO -->
+<section class="relative min-h-screen flex flex-col justify-center overflow-hidden pt-24 pb-16 px-8 md:px-16 lg:px-24">
+  <!-- Diagonal gold line -->
+  <div class="slash-divider"></div>
+
+  <!-- Background texture -->
+  <div class="absolute inset-0 z-0" style="background: radial-gradient(ellipse 70% 60% at 65% 50%, rgba(139,46,26,.18) 0%, transparent 70%), radial-gradient(ellipse 50% 80% at 10% 80%, rgba(200,169,110,.07) 0%, transparent 60%);"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto w-full mb-8">
+    <p class="inline-flex items-center gap-2 border border-gold/40 bg-obsidian2/80 px-4 py-2 text-[.68rem] font-bold uppercase tracking-[.16em] text-gold">
+      <span aria-hidden="true">●</span> Proyecto demostrativo · Datos, precios y contenidos ficticios
+    </p>
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto w-full grid md:grid-cols-5 gap-0 items-center">
+
+    <!-- Left: giant title -->
+    <div class="md:col-span-3">
+      <p class="font-body text-cream-dim text-xs tracking-widest uppercase mb-6">Proyecto conceptual · Córdoba</p>
+      <h1 class="overflow-hidden leading-none">
+        <span class="hero-word hero-word--left text-cream" style="font-size:clamp(4rem,11vw,10rem);">Donde</span>
+        <span class="hero-word hero-word--right text-gold"  style="font-size:clamp(4rem,11vw,10rem);">Oriente</span>
+        <span class="hero-word hero-word--left text-cream" style="font-size:clamp(4rem,11vw,10rem);">abraza</span>
+        <span class="hero-word hero-word--right" style="font-size:clamp(4rem,11vw,10rem); -webkit-text-stroke:1px #C8A96E; color:transparent;">Córdoba</span>
+      </h1>
+      <p class="font-body text-cream-dim mt-8 max-w-md leading-relaxed" style="font-size:1.05rem;">
+        Una propuesta gastronómica de inspiración levantina y mediterránea. Esta carta y sus contenidos son ejemplos creados para mostrar una posible experiencia digital.
+      </p>
+      <div class="flex flex-wrap items-center gap-4 mt-10">
+        <a href="#carta" class="btn-primary"><span>Explorar carta demo</span><span>→</span></a>
+        <a href="#carta" class="btn-ghost">Ver carta</a>
+      </div>
+      <div class="flex flex-wrap items-center gap-4 mt-12">
+        <span class="border border-gold/30 px-4 py-3 font-body text-cream-dim text-xs tracking-wide">CARTA DE EJEMPLO</span>
+        <span class="border border-gold/30 px-4 py-3 font-body text-cream-dim text-xs tracking-wide">PRECIOS FICTICIOS</span>
+        <span class="border border-gold/30 px-4 py-3 font-body text-cream-dim text-xs tracking-wide">SIN RESERVAS REALES</span>
+      </div>
+    </div>
+
+    <!-- Right: decorative column -->
+    <div class="md:col-span-2 hidden md:flex flex-col items-end gap-6 pl-10">
+      <div style="width:1px; height:120px; background:linear-gradient(to bottom, transparent, #C8A96E);"></div>
+      <div class="text-right">
+        <p class="font-body text-cream-dim text-xs uppercase tracking-widest mb-2">Información</p>
+        <p class="font-display text-cream italic text-lg">Contenido de muestra</p>
+        <p class="font-body text-cream-dim text-xs mt-1">No representa un local real</p>
+      </div>
+      <div style="border:1px solid rgba(200,169,110,.25); padding:1.5rem 2rem; text-align:right;">
+        <p class="font-body text-cream-dim text-xs uppercase tracking-widest mb-3">Ubicación</p>
+        <p class="font-display text-cream font-bold text-base leading-snug">Dato no disponible<br/>Proyecto conceptual<br/>Ros Solutions</p>
+      </div>
+      <div style="width:1px; height:80px; background:linear-gradient(to bottom, #C8A96E, transparent);"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ MARQUEE -->
+<div class="overflow-hidden py-4 border-t border-b" style="border-color:rgba(200,169,110,.2);">
+  <div class="marquee-track">
+    <span class="font-display italic text-gold text-sm px-8">Carta de ejemplo</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Diseño adaptable</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Experiencia gastronómica</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Proyecto conceptual</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Ros Solutions</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <!-- duplicate for seamless loop -->
+    <span class="font-display italic text-gold text-sm px-8">Carta de ejemplo</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Diseño adaptable</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Experiencia gastronómica</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Proyecto conceptual</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+    <span class="font-display italic text-gold text-sm px-8">Ros Solutions</span>
+    <span class="font-body text-cream-dim text-xs px-4">✦</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ NOSOTROS / PROBLEMA-SOLUCIÓN -->
+<section id="nosotros" class="py-28 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-20 items-center">
+    <!-- Texto -->
+    <div class="reveal">
+      <p class="font-body text-gold text-xs uppercase tracking-widest mb-4">Por qué Damasco</p>
+      <h2 class="font-display text-cream font-bold leading-tight mb-6" style="font-size:clamp(2.2rem,5vw,3.8rem);">
+        Una identidad gastronómica<br/><em class="text-gold">con personalidad</em><br/>para una demo web.
+      </h2>
+      <p class="font-body text-cream-dim leading-relaxed mb-4" style="font-size:1rem;">
+        Esta sección presenta una posible identidad de marca para un restaurante de cocina mediterránea con influencias árabes. El nombre, el relato y los textos son ficticios y se utilizan únicamente como muestra de diseño.
+      </p>
+      <p class="font-body text-cream leading-relaxed" style="font-size:1rem;">
+        La propuesta combina una estética cálida, una carta organizada por categorías y una navegación sencilla para que los visitantes puedan descubrir el concepto del restaurante desde cualquier dispositivo.
+      </p>
+      <hr class="gold-rule my-8" />
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <p class="font-display text-gold font-bold text-2xl">01</p>
+          <p class="font-body text-cream-dim text-sm mt-1">Concepto de marca</p>
+        </div>
+        <div>
+          <p class="font-display text-gold font-bold text-2xl">UX</p>
+          <p class="font-body text-cream-dim text-sm mt-1">Carta digital organizada</p>
+        </div>
+      </div>
+    </div>
+    <!-- Decorative block -->
+    <div class="reveal grid grid-cols-2 gap-4">
+      <div class="col-span-2 benefit-card p-8">
+        <p class="font-body text-gold text-xs uppercase tracking-widest mb-3">El problema</p>
+        <p class="font-display text-cream italic text-xl leading-snug">"Una carta clara y una experiencia digital cuidada facilitan descubrir la propuesta gastronómica."</p>
+        <p class="font-body text-cream-dim text-xs mt-4">— Texto ilustrativo · No es una reseña</p>
+      </div>
+      <div class="benefit-card p-6">
+        <p class="font-display text-gold font-bold text-4xl mb-2">↓</p>
+        <p class="font-body text-cream-dim text-sm leading-relaxed">Identidad visual diferenciada</p>
+      </div>
+      <div class="benefit-card p-6">
+        <p class="font-display text-gold font-bold text-4xl mb-2">↑</p>
+        <p class="font-body text-cream-dim text-sm leading-relaxed">Navegación sencilla y clara</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CARTA -->
+<section id="carta" class="py-28 px-8 md:px-16 lg:px-24" style="background:#0F0C09;">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center reveal mb-16">
+      <p class="font-body text-gold text-xs uppercase tracking-widest mb-3">Carta conceptual</p>
+      <h2 class="font-display text-cream font-bold leading-tight" style="font-size:clamp(2.2rem,5vw,3.6rem);">
+        La carta
+      </h2>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex justify-start md:justify-center gap-0 mb-12 reveal overflow-x-auto" role="tablist" aria-label="Categorías de la carta" style="border-bottom:1px solid rgba(200,169,110,.2);">
+      <button type="button" id="tab-btn-entrantes" data-tab="entrantes" role="tab" aria-controls="tab-entrantes" aria-selected="true" class="tab-btn active font-body text-cream-dim text-sm uppercase tracking-widest px-8 py-4 border-b-2 border-transparent">Entrantes</button>
+      <button type="button" id="tab-btn-principales" data-tab="principales" role="tab" aria-controls="tab-principales" aria-selected="false" class="tab-btn font-body text-cream-dim text-sm uppercase tracking-widest px-8 py-4 border-b-2 border-transparent">Principales</button>
+      <button type="button" id="tab-btn-postres" data-tab="postres" role="tab" aria-controls="tab-postres" aria-selected="false" class="tab-btn font-body text-cream-dim text-sm uppercase tracking-widest px-8 py-4 border-b-2 border-transparent">Postres</button>
+      <button type="button" id="tab-btn-bebidas" data-tab="bebidas" role="tab" aria-controls="tab-bebidas" aria-selected="false" class="tab-btn font-body text-cream-dim text-sm uppercase tracking-widest px-8 py-4 border-b-2 border-transparent">Bebidas</button>
+    </div>
+
+    <!-- Entrantes -->
+    <div id="tab-entrantes" class="tab-panel grid md:grid-cols-2 gap-6" role="tabpanel" aria-labelledby="tab-btn-entrantes">
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Hummus artesano</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Garbanzos de Córdoba, tahini, limón fresco y aceite de oliva virgen extra</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">6,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Taboulé de quinoa</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Quinoa, tomate, pepino, perejil fresco, menta y vinagreta de limón</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">7,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Falafel casero (6 uds.)</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Garbanzos y habas, especias árabes, salsa de yogur y hierba fresca</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">8,00€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Crema de berenjenas (Moutabal)</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Berenjena asada, tahini, ajo, limón y granadas de temporada</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">7,00€</p>
+      </div>
+    </div>
+
+    <!-- Principales -->
+    <div id="tab-principales" class="tab-panel grid md:grid-cols-2 gap-6" role="tabpanel" aria-labelledby="tab-btn-principales" hidden>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Tagine de cordero</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Cordero de la sierra, ciruelas, almendras tostadas y especias ras el hanout</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">16,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Cuscús de verduras</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Verduras de temporada, caldo de especias, cilantro fresco y harissa</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">13,00€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Pechuga de pollo a la Damascus</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Pollo de corral marinado en sumac, yogur y comino, con arroz basmati</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">14,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Kebab de ternera artesano</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Carne picada de ternera local, hierbas frescas, cebolla caramelizada y pan pita</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">15,00€</p>
+      </div>
+    </div>
+
+    <!-- Postres -->
+    <div id="tab-postres" class="tab-panel grid md:grid-cols-2 gap-6" role="tabpanel" aria-labelledby="tab-btn-postres" hidden>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Baklava de nueces</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Hojaldre crujiente, nueces, miel de azahar y agua de rosas</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">4,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Arroz con leche al cardamomo</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Arroz cremoso, leche de cabra, cardamomo, pistachos y pétalos de rosa</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">5,00€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Namoura (pastel de sémola)</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Bizcocho de sémola húmedo, almíbar de miel y agua de azahar</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">4,00€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Selección de dátiles Medjool</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Dátiles premium rellenos de crema de pistacho, decorados con oro comestible</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">5,50€</p>
+      </div>
+    </div>
+
+    <!-- Bebidas -->
+    <div id="tab-bebidas" class="tab-panel grid md:grid-cols-2 gap-6" role="tabpanel" aria-labelledby="tab-btn-bebidas" hidden>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Té de menta árabe</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Té verde con hierbabuena fresca y azúcar de caña</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">2,80€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Limonada de agua de rosas</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Limón exprimido, agua de rosas, menta y miel silvestre</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">3,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Ayran (yogur salado)</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Yogur natural batido, agua fría y sal del Himalaya</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">2,50€</p>
+      </div>
+      <div class="dish-card p-6 flex justify-between items-start gap-4">
+        <div>
+          <p class="font-display text-cream font-bold text-lg">Vinos de la tierra</p>
+          <p class="font-body text-cream-dim text-sm mt-1 leading-relaxed">Selección de vinos DO Montilla-Moriles y otras denominaciones andaluzas</p>
+        </div>
+        <p class="font-display text-gold font-bold text-xl whitespace-nowrap">3–7€</p>
+      </div>
+    </div>
+
+    <p class="font-body text-cream-dim text-xs text-center mt-10 opacity-60">Carta y precios ficticios · Contenido de muestra, no válido para realizar pedidos</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ BENEFICIOS -->
+<section class="py-28 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
+  <div class="reveal mb-16">
+    <p class="font-body text-gold text-xs uppercase tracking-widest mb-3">Qué muestra este proyecto</p>
+    <h2 class="font-display text-cream font-bold leading-tight" style="font-size:clamp(2.2rem,5vw,3.6rem);">
+      Una experiencia<br/>digital para un<br/><em class="text-gold">restaurante.</em>
+    </h2>
+  </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-px" style="background:rgba(200,169,110,.12);">
+    <div class="benefit-card p-10" style="background:#0D0A07;">
+      <p class="font-display text-gold font-bold text-5xl mb-4">01</p>
+      <p class="font-display text-cream font-bold text-xl mb-3">Cocina con identidad</p>
+      <p class="font-body text-cream-dim text-sm leading-relaxed">Concepto visual inspirado en la cocina árabe y mediterránea. El contenido gastronómico es ficticio y sirve para mostrar el diseño.</p>
+    </div>
+    <div class="benefit-card p-10" style="background:#0D0A07;">
+      <p class="font-display text-gold font-bold text-5xl mb-4">02</p>
+      <p class="font-display text-cream font-bold text-xl mb-3">Información verificada</p>
+      <p class="font-body text-cream-dim text-sm leading-relaxed">No se muestran reseñas ni valoraciones inventadas. Los datos reales se añadirían únicamente con autorización y verificación.</p>
+    </div>
+    <div class="benefit-card p-10" style="background:#0D0A07;">
+      <p class="font-display text-gold font-bold text-5xl mb-4">03</p>
+      <p class="font-display text-cream font-bold text-xl mb-3">Precio honesto</p>
+      <p class="font-body text-cream-dim text-sm leading-relaxed">Los precios son inventados y solo ilustran la presentación de una carta digital.</p>
+    </div>
+    <div class="benefit-card p-10" style="background:#0D0A07;">
+      <p class="font-display text-gold font-bold text-5xl mb-4">04</p>
+      <p class="font-display text-cream font-bold text-xl mb-3">Flexible como tú quieras</p>
+      <p class="font-body text-cream-dim text-sm leading-relaxed">La web podría incorporar reservas o pedidos si el negocio ofrece esos servicios y facilita los datos necesarios.</p>
+    </div>
+    <div class="benefit-card p-10" style="background:#0D0A07;">
+      <p class="font-display text-gold font-bold text-5xl mb-4">05</p>
+      <p class="font-display text-cream font-bold text-xl mb-3">Un espacio para todos</p>
+      <p class="font-body text-cream-dim text-sm leading-relaxed">Los servicios, políticas de accesibilidad y características del establecimiento se añadirían tras su confirmación.</p>
+    </div>
+    <div class="benefit-card p-10 flex flex-col justify-between" style="background:#0D0A07;">
+      <p class="font-display text-gold italic text-2xl leading-snug">Una experiencia digital pensada para abrir el apetito.</p>
+      <p class="font-body text-cream-dim text-xs mt-6 uppercase tracking-widest">Concepto creativo · Sin reseñas reales</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ UBICACIÓN -->
+<section id="ubicacion" class="py-28 px-8 md:px-16 lg:px-24" style="background:#0F0C09;">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="reveal">
+      <p class="font-body text-gold text-xs uppercase tracking-widest mb-4">Encuéntranos</p>
+      <h2 class="font-display text-cream font-bold leading-tight mb-8" style="font-size:clamp(2rem,4.5vw,3.2rem);">
+        En el corazón<br/>del <em class="text-gold">Centro Histórico</em>
+      </h2>
+      <div class="space-y-5">
+        <div class="flex items-start gap-4">
+          <span class="text-gold mt-1">📍</span>
+          <div>
+            <p class="font-body text-cream font-semibold">Dirección</p>
+            <p class="font-body text-cream-dim text-sm">Dirección ficticia no publicada · Pendiente de datos reales</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <span class="text-gold mt-1">🕐</span>
+          <div>
+            <p class="font-body text-cream font-semibold">Horario</p>
+            <p class="font-body text-cream-dim text-sm">Horario de ejemplo · Pendiente de confirmación</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <span class="text-gold mt-1">📞</span>
+          <div>
+            <p class="font-body text-cream font-semibold">Teléfono</p>
+            <span class="font-body text-cream-dim text-sm">Teléfono no disponible en esta demo</span>
+          </div>
+        </div>
+      </div>
+      <a href="#carta" class="btn-primary mt-10 inline-flex"><span>Consultar carta de ejemplo</span><span>→</span></a>
+    </div>
+    <!-- Ubicación ilustrativa: no se muestra un mapa real para evitar señalar un negocio ajeno -->
+    <div class="reveal map-wrapper flex min-h-[320px] items-center justify-center p-8 text-center" style="border:1px solid rgba(200,169,110,.2); background:radial-gradient(circle at center, rgba(139,46,26,.22), transparent 65%);">
+      <div>
+        <p class="font-display text-gold text-5xl mb-4">✦</p>
+        <p class="font-body text-cream uppercase tracking-widest text-sm mb-2">Ubicación por definir</p>
+        <p class="font-body text-cream-dim text-sm max-w-xs">En una web real, aquí se integraría el mapa y la dirección verificada del restaurante.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER CTA -->
+<footer class="pt-28 pb-16 px-8 md:px-16 lg:px-24 text-center" style="background:#0D0A07; border-top:1px solid rgba(200,169,110,.15);">
+  <div class="max-w-3xl mx-auto">
+    <p class="font-body text-gold text-xs uppercase tracking-widest mb-6">Proyecto de portfolio</p>
+    <h2 class="font-display text-cream font-bold leading-tight mb-8" style="font-size:clamp(2.5rem,7vw,5.5rem);">
+      Una web que<br/><em class="text-gold">abre el apetito.</em>
+    </h2>
+    <a href="#carta" class="btn-primary text-base px-10 py-5"><span>Explorar carta de ejemplo</span><span>→</span></a>
+    <hr class="gold-rule my-16" />
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-body text-cream-dim">
+      <p>© <span id="current-year"></span> Damasco · Proyecto demostrativo</p>
+      <p>Datos y precios ficticios · Sin establecimiento real asociado</p>
+      <p>Diseñado por Ros Solutions</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+
+  // ── Hero words animate in
+  document.addEventListener('DOMContentLoaded', () => {
+    const words = document.querySelectorAll('.hero-word');
+    words.forEach((w, i) => {
+      setTimeout(() => w.classList.add('in'), 200 + i * 120);
+    });
+  });
+
+  // ── Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Menu tabs
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.hidden = panel.id !== 'tab-' + name;
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(button => {
+      const isActive = button.dataset.tab === name;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => switchTab(button.dataset.tab));
+  });
+</script>
+</body>
+</html>
